@@ -220,7 +220,7 @@ public LineaHorizonte LineaHorizonteFussion(LineaHorizonte s1,LineaHorizonte s2)
      pocos días antes del estado de alarma.
      */
 
-    public void cargarEdificios (String fichero)
+  public void cargarEdificios (String fichero)
     {
 //    	int n = 6;
 //    	int i=0;
@@ -232,19 +232,13 @@ public LineaHorizonte LineaHorizonteFussion(LineaHorizonte s1,LineaHorizonte s2)
 //            xd=(int)(xi+(Math.random()*100));
 //            this.addEdificio(new Edificio(xi,y,xd));
 //        }
-    	
         try
         {
-            int xi, y, xd;
             Scanner sr = new Scanner(new File(fichero));
 
             while(sr.hasNext())
             {
-                xi = sr.nextInt();
-                xd = sr.nextInt();
-                y = sr.nextInt();
-
-                Edificio Salida = new Edificio(xi, y, xd);
+                Edificio Salida = new Edificio(sr.nextInt(), sr.nextInt(), sr.nextInt());
                 this.addEdificio(Salida);
             }
         }
