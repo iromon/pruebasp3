@@ -83,19 +83,8 @@ public class LineaHorizonte {
     	
     	for(int i=0; i< LineaHorizonte.size(); i++ ){
     		//System.out.println("X: " + LineaHorizonte.get(i).getX() + " Y: " + LineaHorizonte.get(i).getY());
-    		System.out.println(cadena(i));
+		Punto p = LineaHorizonte.get(i);
+    		System.out.println(p.toString());
     	}
-    }
-    
-    public String cadena (int i){
-    	Punto p = LineaHorizonte.get(i);
-    	int x = p.getX();
-    	int y = p.getY();
-    	String linea = "Punto [x=";
-		linea = linea + x;
-		linea = linea + ", y=";
-		linea = linea + y;
-		linea = linea +  "]";
-		return linea;
     }
 }
