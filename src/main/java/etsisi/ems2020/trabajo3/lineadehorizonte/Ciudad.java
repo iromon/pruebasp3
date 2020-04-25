@@ -84,8 +84,7 @@ public LineaHorizonte crearLineaHorizonte(int pi, int pd){
 	// Caso base, la ciudad solo tiene un edificio, el perfil es el de ese edificio. 
 	if(pi==pd) {
 
-		edificio = this.getEdificio(pi); // Obtenemos el único edificio y lo guardo en b
-		obtenerEdificio(edificio,p1,p2);
+		obtenerEdificio(getEdificio(pi),p1,p2);
 		añadirPuntos(linea,p1,p2);
 
 	}
