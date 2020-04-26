@@ -53,18 +53,9 @@ public class LineaHorizonte {
       mediante la t�cnica de divide y vencer�s.
      */
     
-    public void guardarPunto(Punto p, int i, PrintWriter out) {
-        p=(getPunto(i));
-        out.print(p.getX());
-        out.print(" ");
-        out.print(p.getY());
-        out.println();
-    }
-    
     public void guardaLineaHorizonte (String fichero)
     {
-        
-    	try
+        try
         {
             Punto p = new Punto();
             FileWriter fileWriter = new FileWriter(fichero);
@@ -72,7 +63,8 @@ public class LineaHorizonte {
          
             for(int i=0; i<this.size(); i++)
             {
-                guardarPunto(p,i,out);
+                p=(getPunto(i));
+                out.print(p.getX()+" "+p.getY()+"/n");
             }
             out.close();
         }
@@ -83,8 +75,13 @@ public class LineaHorizonte {
     	
     	for(int i=0; i< LineaHorizonte.size(); i++ ){
     		//System.out.println("X: " + LineaHorizonte.get(i).getX() + " Y: " + LineaHorizonte.get(i).getY());
-		Punto p = LineaHorizonte.get(i);
-    		System.out.println(p.toString());
+    		System.out.println(cadena(i));
     	}
+    }
+    
+    public String cadena (int i){
+    	Punto p = LineaHorizonte.get(i);
+    	String linea = p.toString();
+		return linea;
     }
 }

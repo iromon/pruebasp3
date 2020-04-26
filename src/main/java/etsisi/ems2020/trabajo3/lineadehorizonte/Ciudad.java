@@ -1,5 +1,6 @@
 package etsisi.ems2020.trabajo3.lineadehorizonte;
 
+import javax.sound.sampled.Line;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -15,6 +16,10 @@ import java.util.Scanner;
 public class Ciudad {
 	
     private ArrayList <Edificio> ciudad;
+    
+    private int alturaAnteriorPuntoUno;
+    private int alturaAnteriorPuntoDos;
+    private int ultimaAlturaAnterior;
 
     public Ciudad()
     {
@@ -58,44 +63,37 @@ ciudad = new ArrayList <Edificio>();
         int pd = ciudad.size()-1;      
         return crearLineaHorizonte(pi, pd);  
     }
-    
-public void obtenerEdificio(Edificio edificio, Punto p1, Punto p2) {
-	
-	p1.setX(edificio.getXi());       
-	p1.setY(edificio.getY());      // guardo la altura
-	p2.setX(edificio.getXd());       
-	p2.setY(0);         // como el edificio se compone de 3 variables, en la Y de p2 le añadiremos un 0	
-}
 
-public void añadirPuntos(LineaHorizonte linea, Punto p1, Punto p2) {
-	// Añado los puntos a la línea del horizonte
-	linea.addPunto(p1);      
-	linea.addPunto(p2);
-	
-}
+    public LineaHorizonte crearLineaHorizonte(int pi, int pd) {
 
-public LineaHorizonte crearLineaHorizonte(int pi, int pd){
-
-	LineaHorizonte linea = new LineaHorizonte(); // LineaHorizonte de salida
-	Punto p1 = new Punto();   // punto donde se guardara en su X la Xi del efificio y en su Y la altura del edificio
-	Punto p2 = new Punto();   // punto donde se guardara en su X la Xd del efificio y en su Y le pondremos el valor 0
-	Edificio edificio = new Edificio();    
+        LineaHorizonte linea = new LineaHorizonte(); // LineaHorizonte de salida
         
-	// Caso base, la ciudad solo tiene un edificio, el perfil es el de ese edificio. 
-	if(pi==pd) {
+        // Caso base, la ciudad solo tiene un edificio, el perfil es el de ese edificio.
+        if (pi == pd) {
+            aniadirPuntosEdificio(linea,pi);
+        } else {
+            // Edificio mitad
+            int medio = (pi + pd) / 2;
+            linea = LineaHorizonteFussion(crearLineaHorizonte(pi, medio), crearLineaHorizonte(medio + 1, pd));
+        }
+        return linea;
+    }
 
-		obtenerEdificio(getEdificio(pi),p1,p2);
-		añadirPuntos(linea,p1,p2);
+    public void aniadirPuntosEdificio(LineaHorizonte linea, int pi) {
 
-	}
-	else{
-		// Edificio mitad
-		int medio=(pi+pd)/2;
+    	Punto p1 = new Punto();   // punto donde se guardara en su X la Xi del efificio y en su Y la altura del edificio
+        Punto p2 = new Punto();   // punto donde se guardara en su X la Xd del efificio y en su Y le pondremos el valor 0
 
-		linea = LineaHorizonteFussion(crearLineaHorizonte(pi,medio),crearLineaHorizonte(medio+1,pd)); 
-	}
-	return linea;
-}
+        Edificio edificio = this.getEdificio(pi); // obtener el edificio del caso base
+
+        p1.setX(edificio.getXi());		// guardo los puntos del edificio
+        p1.setY(edificio.getY());        
+        p2.setX(edificio.getXd());
+        p2.setY(0);      
+
+        linea.addPunto(p1);				// añado los puntos a la linea horiznte
+        linea.addPunto(p2);
+    }
     
     /**
      * Función encargada de fusionar los dos LineaHorizonte obtenidos por la técnica divide y
@@ -103,106 +101,152 @@ public LineaHorizonte crearLineaHorizonte(int pi, int pd){
      * edificio solapa a otro, si hay edificios contiguos, etc. y solucionar dichos
      * problemas para que el LineaHorizonte calculado sea el correcto.
      */
+    
+    public void hayElementos(LineaHorizonte s1,LineaHorizonte s2, LineaHorizonte salida) {
+    	
+    	Punto p1 = new Punto();         // punto donde guardaremos el primer punto del LineaHorizonte s1
+        Punto p2 = new Punto();         // punto donde guardaremos el primer punto del LineaHorizonte s2
 
-public LineaHorizonte LineaHorizonteFussion(LineaHorizonte s1,LineaHorizonte s2){
-    	// en estas variables guardaremos las alturas de los puntos anteriores, en s1y la del s1, en s2y la del s2 
-    	// y en prev guardaremos la previa del segmento anterior introducido
-        int s1y=-1, s2y=-1, prev=-1;
+    	
+    	p1 = s1.getPunto(0); // guardamos el primer elemento de s1
+        p2 = s2.getPunto(0); // guardamos el primer elemento de s2
+
+        if (p1.getX() < p2.getX()) // si X del s1 es menor que la X del s2
+        {
+            utilizarPrimerHorizonte(p1,s1,salida);
+        }
+        else if (p1.getX() > p2.getX()) // si X del s1 es mayor que la X del s2
+        {
+            utilizarSegundoHorizonte(p2,s2,salida);
+        }
+        else // si la X del s1 es igual a la X del s2
+        {
+            utilizarHorizonteMasAlto(p1,p2,salida);
+            s1.borrarPunto(0); // eliminamos el punto del s1 y del s2
+            s2.borrarPunto(0);
+        }
+    }
+    
+    
+    public LineaHorizonte LineaHorizonteFussion(LineaHorizonte s1,LineaHorizonte s2)
+    {    	
         LineaHorizonte salida = new LineaHorizonte(); // LineaHorizonte de salida
         
+        /*
         Punto p1 = new Punto();         // punto donde guardaremos el primer punto del LineaHorizonte s1
         Punto p2 = new Punto();         // punto donde guardaremos el primer punto del LineaHorizonte s2
-        Punto paux = new Punto ();	
-        
-        
-        System.out.println("==== S1 ====");
-        s1.imprimir();
-        System.out.println("==== S2 ====");
-        s2.imprimir();
-        System.out.println("\n");
-        
-        int x1 = p1.getX(), x2 = p2.getX(), y1 = p1.getY(), y2 = p2.getY();
-        int auxy=paux.getY();
-        
-        
+        */
+        inicializarVariables();
+        imprimirBanner(s1,s2);
+
         //Mientras tengamos elementos en s1 y en s2
         while ((!s1.isEmpty()) && (!s2.isEmpty())) 
-        {
-            paux = new Punto();  // Inicializamos la variable paux
+        {	
+        	hayElementos(s1,s2,salida);
+        	/*
             p1 = s1.getPunto(0); // guardamos el primer elemento de s1
             p2 = s2.getPunto(0); // guardamos el primer elemento de s2
 
-            if (x1 < x2) // si X del s1 es menor que la X del s2 (p1.getX() < p2.getX())
+            if (p1.getX() < p2.getX()) // si X del s1 es menor que la X del s2
             {
-                paux.setX(x1);//p1.getX());                // guardamos en paux esa X
-                paux.setY(Math.max(y1,s2y));//p1.getY(), s2y)); // y hacemos que el maximo entre la Y del s1 y la altura previa del s2 sea la altura Y de paux
-                
-                if (auxy!=prev) // si este maximo no es igual al del segmento anterior
-                {
-                    salida.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
-                    prev = auxy;   // actualizamos prev
-                    //añadirPunto(paux)
-                }
-                s1y =y1;   // actualizamos la altura s1y
-                s1.borrarPunto(0); // en cualquier caso eliminamos el punto de s1 (tanto si se añade como si no es valido)
+                utilizarPrimerHorizonte(p1,s1,salida);
             }
-            else if (x1 > x2) // si X del s1 es mayor que la X del s2
+            else if (p1.getX() > p2.getX()) // si X del s1 es mayor que la X del s2
             {
-                //paux.guardarCoordenadaX(p2);
-            	paux.setX(x2);                // guardamos en paux esa X
-                paux.setY(Math.max(y2, s1y)); // y hacemos que el maximo entre la Y del s2 y la altura previa del s1 sea la altura Y de paux
-
-                if (auxy!=prev) // si este maximo no es igual al del segmento anterior
-                {
-                    salida.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
-                    prev = auxy;    // actualizamos prev
-                  //añadirPunto(paux)
-                }
-                s2y = y2;   // actualizamos la altura s2y
-                s2.borrarPunto(0); // en cualquier caso eliminamos el punto de s2 (tanto si se añade como si no es valido)
+                utilizarSegundoHorizonte(p2,s2,salida);
             }
             else // si la X del s1 es igual a la X del s2
             {
-                if ((y1 > y2) && (y1!=prev)) // guardaremos aquel punto que tenga la altura mas alta
-                {
-                    salida.addPunto(p1);
-                    prev =y1;
-                }
-                if ((y1 <= y2) && (y2!=prev))
-                {
-                    salida.addPunto(p2);
-                    prev = y2;
-                }
-                s1y = y1;   // actualizamos la s1y e s2y
-                s2y = y2;
+                utilizarHorizonteMasAlto(p1,p2,salida);
                 s1.borrarPunto(0); // eliminamos el punto del s1 y del s2
                 s2.borrarPunto(0);
-            }
+            }*/
         }
-        while ((!s1.isEmpty())) //si aun nos quedan elementos en el s1
-        {
-            paux=s1.getPunto(0); // guardamos en paux el primer punto
-            
-            if (auxy!=prev) // si paux no tiene la misma altura del segmento previo
-            {
-                salida.addPunto(paux); // lo añadimos al LineaHorizonte de salida
-                prev = auxy;    // y actualizamos prev
-            }
-            s1.borrarPunto(0); // en cualquier caso eliminamos el punto de s1 (tanto si se añade como si no es valido)
-        }
-        while((!s2.isEmpty())) //si aun nos quedan elementos en el s2
-        {
-            paux=s2.getPunto(0); // guardamos en paux el primer punto
-           
-            if (auxy!=prev) // si paux no tiene la misma altura del segmento previo
-            {
-                salida.addPunto(paux); // lo añadimos al LineaHorizonte de salida
-                prev = auxy;    // y actualizamos prev
-            }
-            s2.borrarPunto(0); // en cualquier caso eliminamos el punto de s2 (tanto si se añade como si no es valido)
-        }
+        utilizarUnaLineaHorizonte(s1,salida);
+        utilizarUnaLineaHorizonte(s2,salida);
         return salida;
     }
+    
+    private void inicializarVariables() {
+    	this.alturaAnteriorPuntoUno = -1;
+    	this.alturaAnteriorPuntoDos = -1;
+    	this.ultimaAlturaAnterior = -1;
+    }
+    
+    
+    private void imprimirBanner(LineaHorizonte uno, LineaHorizonte dos) {
+        System.out.println("==== S1 ====");
+        uno.imprimir();
+        System.out.println("==== S2 ====");
+        dos.imprimir();
+        System.out.println("\n");
+    }
+
+    
+    private void utilizarUnaLineaHorizonte(LineaHorizonte linea, LineaHorizonte salida) {
+    	
+    	Punto paux = new Punto();
+    	
+    	while(!linea.isEmpty()) //si aun nos quedan elementos en la linea horizonte
+        {
+             paux=linea.getPunto(0); // guardamos en paux el primer punto
+            
+             if (paux.getY()!=ultimaAlturaAnterior) // si paux no tiene la misma altura del segmento ultimaAlturaAnteriorio
+             {
+                 salida.addPunto(paux); // lo añadimos al LineaHorizonte de salida
+                 ultimaAlturaAnterior = paux.getY();    // y actualizamos ultimaAlturaAnterior
+             }
+             linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
+        }
+    }
+    
+    private Punto crearPuntoAuxiliar(Punto punto, int alturaAnteriorPunto) {
+    	Punto paux = new Punto();
+    	paux.setX(punto.getX());                // guardamos en paux esa X
+        paux.setY(Math.max(punto.getY(), alturaAnteriorPunto)); // guardamos en paux el maximo entre la Y del punto o alturaAnterior del otro punto
+        return paux;
+    }
+    
+    private void utilizarPrimerHorizonte(Punto punto, LineaHorizonte linea, LineaHorizonte salida) {
+    	
+    	Punto paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoDos);
+    	
+        if (paux.getY()!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
+        {
+            salida.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
+            ultimaAlturaAnterior = paux.getY();    // actualizamos ultimaAlturaAnterior
+        }
+        alturaAnteriorPuntoUno = punto.getY();   // actualizamos la altura alturaAnteriorPuntoUno
+        linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
+    }
+    
+    private void utilizarSegundoHorizonte(Punto punto, LineaHorizonte linea, LineaHorizonte salida) {
+        Punto paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoUno);
+    	
+        if (paux.getY()!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
+        {
+            salida.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
+            ultimaAlturaAnterior = paux.getY();    // actualizamos ultimaAlturaAnterior
+        }
+        alturaAnteriorPuntoDos = punto.getY();   // actualizamos la altura alturaAnteriorPuntoDos
+        linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
+    }
+    
+    private void utilizarHorizonteMasAlto(Punto uno, Punto dos, LineaHorizonte salida) {
+    	if ((uno.getY() > dos.getY()) && (uno.getY()!=ultimaAlturaAnterior)) // guardaremos aquel punto que tenga la altura mas alta
+        {
+            salida.addPunto(uno);
+            ultimaAlturaAnterior = uno.getY();
+        }
+        if ((uno.getY() <= dos.getY()) && (dos.getY()!=ultimaAlturaAnterior))
+        {
+            salida.addPunto(dos);
+            ultimaAlturaAnterior = dos.getY();
+        }
+        alturaAnteriorPuntoUno = uno.getY();   // actualizamos la alturaAnteriorPuntoUno e alturaAnteriorPuntoDos
+        alturaAnteriorPuntoDos = dos.getY();
+    }
+    
     /*
      Método que carga los edificios que me pasan en el
      archivo cuyo nombre se encuentra en "fichero".
@@ -210,7 +254,7 @@ public LineaHorizonte LineaHorizonteFussion(LineaHorizonte s1,LineaHorizonte s2)
      pocos días antes del estado de alarma.
      */
 
-  public void cargarEdificios (String fichero)
+public void cargarEdificios (String fichero)
     {
 //    	int n = 6;
 //    	int i=0;
@@ -222,6 +266,7 @@ public LineaHorizonte LineaHorizonteFussion(LineaHorizonte s1,LineaHorizonte s2)
 //            xd=(int)(xi+(Math.random()*100));
 //            this.addEdificio(new Edificio(xi,y,xd));
 //        }
+    	
         try
         {
             Scanner sr = new Scanner(new File(fichero));
