@@ -176,7 +176,9 @@ public class Ciudad {
                 utilizarSegundoHorizonte(p2,dos);
             }
             else { // si la X del s1 es igual a la X del s2
-                utilizarHorizonteMasAlto(p1,p2,uno,dos);
+                utilizarHorizonteMasAlto(p1,p2);
+                borrarPunto(uno,0);
+                borrarPunto(dos,0);
             }
         }
     }
@@ -232,7 +234,7 @@ public class Ciudad {
         borrarPunto(linea,0);
     }
     
-    private void utilizarHorizonteMasAlto(Punto uno, Punto dos, LineaHorizonte primero, LineaHorizonte segundo) {
+    private void utilizarHorizonteMasAlto(Punto uno, Punto dos) {
     	if ((devolverCoordenadaY(uno) > devolverCoordenadaY(dos)) && (devolverCoordenadaY(uno)!=ultimaAlturaAnterior)) { // guardaremos aquel punto que tenga la altura mas alta
     		anadirPunto(salidaFusion,uno);
             ultimaAlturaAnterior = devolverCoordenadaY(uno);
@@ -243,8 +245,7 @@ public class Ciudad {
         }
         alturaAnteriorPuntoUno = devolverCoordenadaY(uno);   // actualizamos la alturaAnteriorPuntoUno e alturaAnteriorPuntoDos
         alturaAnteriorPuntoDos = devolverCoordenadaY(dos);
-        borrarPunto(primero,0);
-        borrarPunto(segundo,0);
+
     }
     
     /*
