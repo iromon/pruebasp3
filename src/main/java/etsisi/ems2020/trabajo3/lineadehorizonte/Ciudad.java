@@ -22,27 +22,35 @@ public class Ciudad {
     private int ultimaAlturaAnterior;
     private LineaHorizonte salidaFusion;
     
-    private int x, y;
+    private int x, z, y;
+
     
-    public void anadirCoordenadaX(Punto p,int x) {
+    private void anadirCoordenadaX(Punto p,int x) {
         p.setX(x);
     }
     
-    public void anadirCoordenadaY(Punto p,int y) {
+    private void anadirCoordenadaY(Punto p,int y) {
          p.setY(y);
     }
     
-    public int devolverCoordenadaX(Punto p) {
+    private int devolverCoordenadaX(Punto p) {
     	return p.getX();
     }
     
-    public int devolverCoordenadaY(Punto p) {
+    private int devolverCoordenadaY(Punto p) {
     	return p.getY();
     }
     
+    private void anadirPunto(LineaHorizonte linea,Punto p) {
+    	
+    	linea.addPunto(p);
+    }
     
+    private void borrarPunto(LineaHorizonte linea,int z) {
+    	
+    	linea.borrarPunto(z);
+    }
     
-
 	public Ciudad(){
 	    	
 	    	/*
@@ -117,8 +125,10 @@ public class Ciudad {
         p2.setY(0);      
         */
         
-        linea.addPunto(p1);				// añado los puntos a la linea horiznte
-        linea.addPunto(p2);
+        anadirPunto(linea,p1);
+        anadirPunto(linea,p2);
+        //linea.addPunto(p1);				// añado los puntos a la linea horiznte
+        //linea.addPunto(p2);
     }
     
     /**
@@ -177,7 +187,7 @@ public class Ciudad {
     
     private void utilizarUnaLineaHorizonte(LineaHorizonte linea) {
     	
-    	Punto paux = new Punto();
+    	Punto paux = new Punto ();
     	
     	while(!linea.isEmpty()) //si aun nos quedan elementos en la linea horizonte
         {
@@ -185,17 +195,20 @@ public class Ciudad {
             
              if (devolverCoordenadaY(paux)!=ultimaAlturaAnterior) // si paux no tiene la misma altura del segmento ultimaAlturaAnteriorio
              {
-                 salidaFusion.addPunto(paux); // lo añadimos al LineaHorizonte de salida
+                 anadirPunto(salidaFusion,paux);
+            	 //salidaFusion.addPunto(paux); // lo añadimos al LineaHorizonte de salida
                  ultimaAlturaAnterior = devolverCoordenadaY(paux);    // y actualizamos ultimaAlturaAnterior
              }
-             linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
+             borrarPunto(linea,0);
+             //linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
         }
     }
     
     private Punto crearPuntoAuxiliar(Punto punto, int alturaAnteriorPunto) {
+    	
     	Punto paux = new Punto();
     	anadirCoordenadaX(paux,devolverCoordenadaX(punto));
-    	anadirCoordenadaY(paux,Math.max(punto.getY(), alturaAnteriorPunto));
+    	anadirCoordenadaY(paux,Math.max(devolverCoordenadaY(punto), alturaAnteriorPunto));
     	//paux.setX(punto.getX());                // guardamos en paux esa X
         //paux.setY(Math.max(punto.getY(), alturaAnteriorPunto)); // guardamos en paux el maximo entre la Y del punto o alturaAnterior del otro punto
         return paux;
@@ -207,11 +220,13 @@ public class Ciudad {
     	
         if (devolverCoordenadaY(paux)!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
         {
-            salidaFusion.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
+        	anadirPunto(salidaFusion,paux);
+        	//salidaFusion.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
             ultimaAlturaAnterior = devolverCoordenadaY(paux);    // actualizamos ultimaAlturaAnterior
         }
         alturaAnteriorPuntoUno = devolverCoordenadaY(punto);   // actualizamos la altura alturaAnteriorPuntoUno
-        linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
+        borrarPunto(linea,0);
+        //linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
     }
     
     private void utilizarSegundoHorizonte(Punto punto, LineaHorizonte linea) {
@@ -219,26 +234,32 @@ public class Ciudad {
     	
         if (devolverCoordenadaY(paux)!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
         {
-            salidaFusion.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
+        	anadirPunto(salidaFusion,paux);
+        	//salidaFusion.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
             ultimaAlturaAnterior = devolverCoordenadaY(paux);    // actualizamos ultimaAlturaAnterior
         }
         alturaAnteriorPuntoDos = devolverCoordenadaY(punto);   // actualizamos la altura alturaAnteriorPuntoDos
-        linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
+        borrarPunto(linea,0);
+        //linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
     }
     
     private void utilizarHorizonteMasAlto(Punto uno, Punto dos, LineaHorizonte primero, LineaHorizonte segundo) {
     	if ((devolverCoordenadaY(uno) > devolverCoordenadaY(dos)) && (devolverCoordenadaY(uno)!=ultimaAlturaAnterior)) { // guardaremos aquel punto que tenga la altura mas alta
-            salidaFusion.addPunto(uno);
+    		anadirPunto(salidaFusion,uno);
+    		//salidaFusion.addPunto(uno);
             ultimaAlturaAnterior = devolverCoordenadaY(uno);
         }
         if ((devolverCoordenadaY(uno) <= devolverCoordenadaY(dos)) && (devolverCoordenadaY(dos)!=ultimaAlturaAnterior)){
-            salidaFusion.addPunto(dos);
+            anadirPunto(salidaFusion,dos);
+        	//salidaFusion.addPunto(dos);
             ultimaAlturaAnterior = devolverCoordenadaY(dos);
         }
         alturaAnteriorPuntoUno = devolverCoordenadaY(uno);   // actualizamos la alturaAnteriorPuntoUno e alturaAnteriorPuntoDos
         alturaAnteriorPuntoDos = devolverCoordenadaY(dos);
-        primero.borrarPunto(0); // eliminamos el punto del s1 y del s2
-        segundo.borrarPunto(0);
+        borrarPunto(primero,0);
+        borrarPunto(segundo,0);
+        //primero.borrarPunto(0); // eliminamos el punto del s1 y del s2
+        //segundo.borrarPunto(0);
     }
     
     /*
@@ -248,19 +269,18 @@ public class Ciudad {
      pocos días antes del estado de alarma.
      */
 
-public void cargarEdificios (String fichero)
-    {
-//    	int n = 6;
-//    	int i=0;
-//        int xi,y,xd;
-//        for(i=0;i<n;i++)
-//        {
-//            xi=(int)(Math.random()*100);
-//            y=(int)(Math.random()*100);
-//            xd=(int)(xi+(Math.random()*100));
-//            this.addEdificio(new Edificio(xi,y,xd));
-//        }
-    	
+	public void cargarEdificios (String fichero){
+	//    	int n = 6;
+	//    	int i=0;
+	//        int xi,y,xd;
+	//        for(i=0;i<n;i++)
+	//        {
+	//            xi=(int)(Math.random()*100);
+	//            y=(int)(Math.random()*100);
+	//            xd=(int)(xi+(Math.random()*100));
+	//            this.addEdificio(new Edificio(xi,y,xd));
+	//        }
+	    	
         try
         {
             Scanner sr = new Scanner(new File(fichero));
