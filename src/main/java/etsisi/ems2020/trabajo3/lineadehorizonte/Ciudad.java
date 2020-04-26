@@ -25,6 +25,9 @@ public class Ciudad {
     private int x, z, y;
 
 	private Punto paux = new Punto ();
+	
+	private Punto p1 = new Punto ();
+	private Punto p2 = new Punto ();
     
     private void anadirCoordenadaX(Punto p,int x) {
         p.setX(x);
@@ -116,8 +119,8 @@ public class Ciudad {
     	
     	Edificio edificio = this.getEdificio(pi); // obtener el edificio del caso base
         
-        Punto p1 = new Punto(edificio.getXi(),edificio.getY());   
-        Punto p2 = new Punto(edificio.getXd(),0);
+        p1 = new Punto(edificio.getXi(),edificio.getY());   
+        p2 = new Punto(edificio.getXd(),0);
         
         anadirPunto(linea,p1);
         anadirPunto(linea,p2);
@@ -163,17 +166,17 @@ public class Ciudad {
     	//Mientras tengamos elementos en s1 y en s2
         while (!uno.isEmpty() && !dos.isEmpty()) {
         	
-            Punto punto1 = getPunto(uno,0); // guardamos el primer elemento de s1
-            Punto punto2 = getPunto(dos,0); // guardamos el primer elemento de s2
+            p1 = getPunto(uno,0); // guardamos el primer elemento de s1
+            p2 = getPunto(dos,0); // guardamos el primer elemento de s2
 
-            if (devolverCoordenadaX(punto1) < devolverCoordenadaX(punto2)) { // si X del s1 es menor que la X del s2
-                utilizarPrimerHorizonte(punto1,uno);
+            if (devolverCoordenadaX(p1) < devolverCoordenadaX(p2)) { // si X del s1 es menor que la X del s2
+                utilizarPrimerHorizonte(p1,uno);
             }
-            else if (devolverCoordenadaX(punto1) > devolverCoordenadaX(punto2)) { // si X del s1 es mayor que la X del s2
-                utilizarSegundoHorizonte(punto2,dos);
+            else if (devolverCoordenadaX(p1) > devolverCoordenadaX(p2)) { // si X del s1 es mayor que la X del s2
+                utilizarSegundoHorizonte(p2,dos);
             }
             else { // si la X del s1 es igual a la X del s2
-                utilizarHorizonteMasAlto(punto1,punto2,uno,dos);
+                utilizarHorizonteMasAlto(p1,p2,uno,dos);
             }
         }
     }
@@ -196,6 +199,7 @@ public class Ciudad {
     private Punto crearPuntoAuxiliar(Punto punto, int alturaAnteriorPunto) {
     	
     	Punto paux = new Punto();
+    	
     	anadirCoordenadaX(paux,devolverCoordenadaX(punto));
     	anadirCoordenadaY(paux,Math.max(devolverCoordenadaY(punto), alturaAnteriorPunto));
         return paux;
