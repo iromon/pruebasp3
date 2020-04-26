@@ -84,15 +84,18 @@ ciudad = new ArrayList <Edificio>();
 
     public void aniadirPuntosEdificio(LineaHorizonte linea, int pi) {
 
-    	Punto p1 = new Punto();   // punto donde se guardara en su X la Xi del efificio y en su Y la altura del edificio
-        Punto p2 = new Punto();   // punto donde se guardara en su X la Xd del efificio y en su Y le pondremos el valor 0
+    	Edificio edificio = this.getEdificio(pi); // obtener el edificio del caso base
+    	
+    	Punto p1 = new Punto(edificio.getXi(),edificio.getY());   // punto donde se guardara en su X la Xi del efificio y en su Y la altura del edificio
+        Punto p2 = new Punto(edificio.getXd(),0);   // punto donde se guardara en su X la Xd del efificio y en su Y le pondremos el valor 0
 
-        Edificio edificio = this.getEdificio(pi); // obtener el edificio del caso base
-
+       /*
         p1.setX(edificio.getXi());		// guardo los puntos del edificio
         p1.setY(edificio.getY());        
         p2.setX(edificio.getXd());
-        p2.setY(0);      
+        p2.setY(0);
+        */
+  
 
         linea.addPunto(p1);				// añado los puntos a la linea horiznte
         linea.addPunto(p2);
