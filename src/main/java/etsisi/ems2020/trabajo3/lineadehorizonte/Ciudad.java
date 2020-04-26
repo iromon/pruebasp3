@@ -26,6 +26,8 @@ public class Ciudad {
 
 	private Punto paux = new Punto ();
 	
+	private Punto p1 = new Punto ();
+	private Punto p2 = new Punto ();
     
     private void anadirCoordenadaX(Punto p,int x) {
         p.setX(x);
@@ -53,6 +55,11 @@ public class Ciudad {
     
     private Punto getPunto(LineaHorizonte linea, int z) {
     	return linea.getPunto(z);
+    }
+    
+    public boolean isEmpty(LineaHorizonte linea)
+    {
+        return linea.isEmpty();
     }
     
 	public Ciudad(){
@@ -162,10 +169,10 @@ public class Ciudad {
     private void utilizarAmbasLineaHorizonte(LineaHorizonte uno, LineaHorizonte dos) {
     	
     	//Mientras tengamos elementos en s1 y en s2
-        while (!uno.isEmpty() && !dos.isEmpty()) {
+        while (!isEmpty(uno) && !isEmpty(dos)) {
         	
-            Punto p1 = getPunto(uno,0); // guardamos el primer elemento de s1
-            Punto p2 = getPunto(dos,0); // guardamos el primer elemento de s2
+            p1 = getPunto(uno,0); // guardamos el primer elemento de s1
+            p2 = getPunto(dos,0); // guardamos el primer elemento de s2
 
             if (devolverCoordenadaX(p1) < devolverCoordenadaX(p2)) { // si X del s1 es menor que la X del s2
                 utilizarPrimerHorizonte(p1,uno);
@@ -183,7 +190,7 @@ public class Ciudad {
     
     private void utilizarUnaLineaHorizonte(LineaHorizonte linea) {
     	
-    	while(!linea.isEmpty()) //si aun nos quedan elementos en la linea horizonte
+    	while(!isEmpty(linea)) //si aun nos quedan elementos en la linea horizonte
         {
              paux = getPunto(linea,0); // guardamos en paux el primer punto
             
@@ -195,11 +202,20 @@ public class Ciudad {
              borrarPunto(linea,0);
         }
     }
-
+    
+    private Punto crearPuntoAuxiliar(Punto punto, int alturaAnteriorPunto) {
+    	
+    	Punto paux = new Punto();
+    	
+    	anadirCoordenadaX(paux,devolverCoordenadaX(punto));
+    	anadirCoordenadaY(paux,Math.max(devolverCoordenadaY(punto), alturaAnteriorPunto));
+        return paux;
+        
+    }
+    
     private void utilizarPrimerHorizonte(Punto punto, LineaHorizonte linea) {
     	
-    	Punto paux = new Punto (devolverCoordenadaX(punto),Math.max(devolverCoordenadaY(punto),this.alturaAnteriorPuntoDos));
-    	//paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoDos);
+    	paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoDos);
     	
         if (devolverCoordenadaY(paux)!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
         {
@@ -212,7 +228,7 @@ public class Ciudad {
     
     private void utilizarSegundoHorizonte(Punto punto, LineaHorizonte linea) {
        
-    	Punto paux = new Punto (devolverCoordenadaX(punto),Math.max(devolverCoordenadaY(punto),this.alturaAnteriorPuntoUno));
+    	paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoUno);
     	
         if (devolverCoordenadaY(paux)!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
         {
