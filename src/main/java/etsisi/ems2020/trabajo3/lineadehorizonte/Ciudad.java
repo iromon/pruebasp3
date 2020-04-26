@@ -102,7 +102,7 @@ ciudad = new ArrayList <Edificio>();
      * problemas para que el LineaHorizonte calculado sea el correcto.
      */
     
-    public void hayElementos(LineaHorizonte s1,LineaHorizonte s2, LineaHorizonte salida) {
+   public void hayElementos(LineaHorizonte s1,LineaHorizonte s2, LineaHorizonte salida) {
     	
     	Punto p1 = new Punto();         // punto donde guardaremos el primer punto del LineaHorizonte s1
         Punto p2 = new Punto();         // punto donde guardaremos el primer punto del LineaHorizonte s2
@@ -113,11 +113,13 @@ ciudad = new ArrayList <Edificio>();
 
         if (p1.getX() < p2.getX()) // si X del s1 es menor que la X del s2
         {
-            utilizarPrimerHorizonte(p1,s1,salida);
+            utilizarPrimerHorizonte(p1,salida);
+            s1.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
         }
         else if (p1.getX() > p2.getX()) // si X del s1 es mayor que la X del s2
         {
-            utilizarSegundoHorizonte(p2,s2,salida);
+            utilizarSegundoHorizonte(p2,salida);
+            s2.borrarPunto(0);
         }
         else // si la X del s1 es igual a la X del s2
         {
@@ -207,7 +209,7 @@ ciudad = new ArrayList <Edificio>();
         return paux;
     }
     
-    private void utilizarPrimerHorizonte(Punto punto, LineaHorizonte linea, LineaHorizonte salida) {
+    private void utilizarPrimerHorizonte(Punto punto, LineaHorizonte salida) {
     	
     	Punto paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoDos);
     	
@@ -217,10 +219,9 @@ ciudad = new ArrayList <Edificio>();
             ultimaAlturaAnterior = paux.getY();    // actualizamos ultimaAlturaAnterior
         }
         alturaAnteriorPuntoUno = punto.getY();   // actualizamos la altura alturaAnteriorPuntoUno
-        linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
     }
     
-    private void utilizarSegundoHorizonte(Punto punto, LineaHorizonte linea, LineaHorizonte salida) {
+    private void utilizarSegundoHorizonte(Punto punto, LineaHorizonte salida) {
         Punto paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoUno);
     	
         if (paux.getY()!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
@@ -229,7 +230,6 @@ ciudad = new ArrayList <Edificio>();
             ultimaAlturaAnterior = paux.getY();    // actualizamos ultimaAlturaAnterior
         }
         alturaAnteriorPuntoDos = punto.getY();   // actualizamos la altura alturaAnteriorPuntoDos
-        linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
     }
     
     private void utilizarHorizonteMasAlto(Punto uno, Punto dos, LineaHorizonte salida) {
