@@ -24,10 +24,7 @@ public class Ciudad {
     
     private int x, z, y;
 
-	private Punto paux = new Punto ();
-	
-	private Punto p1 = new Punto ();
-	private Punto p2 = new Punto ();
+    private Punto paux = new Punto ();
     
     private void anadirCoordenadaX(Punto p,int x) {
         p.setX(x);
@@ -171,8 +168,8 @@ public class Ciudad {
     	//Mientras tengamos elementos en s1 y en s2
         while (!isEmpty(uno) && !isEmpty(dos)) {
         	
-            p1 = getPunto(uno,0); // guardamos el primer elemento de s1
-            p2 = getPunto(dos,0); // guardamos el primer elemento de s2
+            Punto p1 = getPunto(uno,0); // guardamos el primer elemento de s1
+            Punto p2 = getPunto(dos,0); // guardamos el primer elemento de s2
 
             if (devolverCoordenadaX(p1) < devolverCoordenadaX(p2)) { // si X del s1 es menor que la X del s2
                 utilizarPrimerHorizonte(p1,uno);
