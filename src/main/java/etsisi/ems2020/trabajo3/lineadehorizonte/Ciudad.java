@@ -20,6 +20,9 @@ public class Ciudad {
     private int alturaAnteriorPuntoUno;
     private int alturaAnteriorPuntoDos;
     private int ultimaAlturaAnterior;
+    
+    private int x;
+    private int y;
 
     public Ciudad()
     {
@@ -266,4 +269,31 @@ public void cargarEdificios (String fichero)
             this.addEdificio(new Edificio(xi,y,xd));
         }
     }
+
+
+	public int getX() {
+	    return x;
+	}
+	
+	/*
+	 * 
+	 * Set de la coordenada X
+	 */
+	public void setX(int x) {
+	    this.x = x;
+	}
+	/*
+		   Get de la coordenada Y
+	 */
+	public int getY() {
+	    return y;
+	}
+	/* 
+	 * Set de la coordenada Y
+	 */
+	public void setY(int y) {
+	    this.y = y;
+	}
+
 }
+
