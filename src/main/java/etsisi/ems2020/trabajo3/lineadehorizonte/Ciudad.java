@@ -26,6 +26,11 @@ public class Ciudad {
 
 	private Punto paux = new Punto ();
 	
+    
+    private void anadirCoordenadaX(Punto p,int x) {
+        p.setX(x);
+    }
+    
     private void anadirCoordenadaY(Punto p,int y) {
          p.setY(y);
     }
@@ -190,21 +195,11 @@ public class Ciudad {
              borrarPunto(linea,0);
         }
     }
-    
-    private Punto crearPuntoAuxiliar(Punto punto, int alturaAnteriorPunto) {
-    	
-    	Punto paux = new Punto();
-    	
-    	paux.setX(devolverCoordenadaX(punto));
-    	//anadirCoordenadaX(paux,devolverCoordenadaX(punto));
-    	anadirCoordenadaY(paux,Math.max(devolverCoordenadaY(punto), alturaAnteriorPunto));
-        return paux;
-        
-    }
-    
+
     private void utilizarPrimerHorizonte(Punto punto, LineaHorizonte linea) {
     	
-    	paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoDos);
+    	Punto paux = new Punto (devolverCoordenadaX(punto),Math.max(devolverCoordenadaY(punto),this.alturaAnteriorPuntoDos));
+    	//paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoDos);
     	
         if (devolverCoordenadaY(paux)!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
         {
@@ -217,7 +212,7 @@ public class Ciudad {
     
     private void utilizarSegundoHorizonte(Punto punto, LineaHorizonte linea) {
        
-    	paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoUno);
+    	Punto paux = new Punto (devolverCoordenadaX(punto),Math.max(devolverCoordenadaY(punto),this.alturaAnteriorPuntoUno));
     	
         if (devolverCoordenadaY(paux)!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
         {
@@ -289,6 +284,5 @@ public class Ciudad {
         }
     }
 }
-
 
 
