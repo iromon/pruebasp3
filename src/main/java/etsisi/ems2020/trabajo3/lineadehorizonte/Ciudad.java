@@ -20,24 +20,42 @@ public class Ciudad {
     private int alturaAnteriorPuntoUno;
     private int alturaAnteriorPuntoDos;
     private int ultimaAlturaAnterior;
+    private LineaHorizonte salidaFusion;
     
-    private int x;
-    private int y;
+    private int x, y;
+    
+    public void anadirCoordenadaX(Punto p,int x) {
+        p.setX(x);
+    }
+    
+    public void anadirCoordenadaY(Punto p,int y) {
+         p.setY(y);
+    }
+    
+    public int devolverCoordenadaX(Punto p) {
+    	return p.getX();
+    }
+    
+    public int devolverCoordenadaY(Punto p) {
+    	return p.getY();
+    }
+    
+    
+    
 
-    public Ciudad()
-    {
-    	
-    	/*
-    	 * Generamos una ciudad de manera aleatoria para hacer 
-    	 * pruebas.
-    	 */
-ciudad = new ArrayList <Edificio>();
-int n = 5;
-
-metodoRandom(n);
-        
-ciudad = new ArrayList <Edificio>();
-}
+	public Ciudad(){
+	    	
+	    	/*
+	    	 * Generamos una ciudad de manera aleatoria para hacer 
+	    	 * pruebas.
+	    	 */
+		ciudad = new ArrayList <Edificio>();
+		int n = 5;
+		
+		metodoRandom(n);
+		        
+		ciudad = new ArrayList <Edificio>();
+	}
     
         
     public Edificio getEdificio(int i) {
@@ -81,22 +99,24 @@ ciudad = new ArrayList <Edificio>();
         }
         return linea;
     }
+    
+    
 
     public void aniadirPuntosEdificio(LineaHorizonte linea, int pi) {
-
-    	Edificio edificio = this.getEdificio(pi); // obtener el edificio del caso base
     	
-    	Punto p1 = new Punto(edificio.getXi(),edificio.getY());   // punto donde se guardara en su X la Xi del efificio y en su Y la altura del edificio
-        Punto p2 = new Punto(edificio.getXd(),0);   // punto donde se guardara en su X la Xd del efificio y en su Y le pondremos el valor 0
+    	Edificio edificio = this.getEdificio(pi); // obtener el edificio del caso base
+        
 
-       /*
+        Punto p1 = new Punto(edificio.getXi(),edificio.getY());   
+        Punto p2 = new Punto(edificio.getXd(),0);
+        
+        /*
         p1.setX(edificio.getXi());		// guardo los puntos del edificio
         p1.setY(edificio.getY());        
         p2.setX(edificio.getXd());
-        p2.setY(0);
+        p2.setY(0);      
         */
-  
-
+        
         linea.addPunto(p1);				// añado los puntos a la linea horiznte
         linea.addPunto(p2);
     }
@@ -108,47 +128,22 @@ ciudad = new ArrayList <Edificio>();
      * problemas para que el LineaHorizonte calculado sea el correcto.
      */
 
-
-	public LineaHorizonte LineaHorizonteFussion(LineaHorizonte s1,LineaHorizonte s2){    	
-        
-		LineaHorizonte salida = new LineaHorizonte(); // LineaHorizonte de salida
-        
-        Punto p1 = new Punto();         // punto donde guardaremos el primer punto del LineaHorizonte s1
-        Punto p2 = new Punto();         // punto donde guardaremos el primer punto del LineaHorizonte s2
-        
+    public LineaHorizonte LineaHorizonteFussion(LineaHorizonte s1,LineaHorizonte s2)
+    {    
         inicializarVariables();
         imprimirBanner(s1,s2);
 
-        //Mientras tengamos elementos en s1 y en s2
-        while ((!s1.isEmpty()) && (!s2.isEmpty())) 
-        {
-            p1 = s1.getPunto(0); // guardamos el primer elemento de s1
-            p2 = s2.getPunto(0); // guardamos el primer elemento de s2
-
-            if (p1.getX() < p2.getX()) // si X del s1 es menor que la X del s2
-            {
-                utilizarPrimerHorizonte(p1,s1,salida);
-            }
-            else if (p1.getX() > p2.getX()) // si X del s1 es mayor que la X del s2
-            {
-                utilizarSegundoHorizonte(p2,s2,salida);
-            }
-            else // si la X del s1 es igual a la X del s2
-            {
-                utilizarHorizonteMasAlto(p1,p2,salida);
-                s1.borrarPunto(0); // eliminamos el punto del s1 y del s2
-                s2.borrarPunto(0);
-            }
-        }
-        utilizarUnaLineaHorizonte(s1,salida);
-        utilizarUnaLineaHorizonte(s2,salida);
-        return salida;
+        utilizarAmbasLineaHorizonte(s1,s2);
+        utilizarUnaLineaHorizonte(s1);
+        utilizarUnaLineaHorizonte(s2);
+        return salidaFusion;
     }
     
     private void inicializarVariables() {
     	this.alturaAnteriorPuntoUno = -1;
     	this.alturaAnteriorPuntoDos = -1;
     	this.ultimaAlturaAnterior = -1;
+    	this.salidaFusion = new LineaHorizonte();
     }
     
     
@@ -160,8 +155,27 @@ ciudad = new ArrayList <Edificio>();
         System.out.println("\n");
     }
 
+    private void utilizarAmbasLineaHorizonte(LineaHorizonte uno, LineaHorizonte dos) {
+    	
+    	//Mientras tengamos elementos en s1 y en s2
+        while (!uno.isEmpty() && !dos.isEmpty()) {
+        	
+            Punto punto1 = uno.getPunto(0); // guardamos el primer elemento de s1
+            Punto punto2 = dos.getPunto(0); // guardamos el primer elemento de s2
+
+            if (devolverCoordenadaX(punto1) < devolverCoordenadaX(punto2)) { // si X del s1 es menor que la X del s2
+                utilizarPrimerHorizonte(punto1,uno);
+            }
+            else if (devolverCoordenadaX(punto1) > devolverCoordenadaX(punto2)) { // si X del s1 es mayor que la X del s2
+                utilizarSegundoHorizonte(punto2,dos);
+            }
+            else { // si la X del s1 es igual a la X del s2
+                utilizarHorizonteMasAlto(punto1,punto2,uno,dos);
+            }
+        }
+    }
     
-    private void utilizarUnaLineaHorizonte(LineaHorizonte linea, LineaHorizonte salida) {
+    private void utilizarUnaLineaHorizonte(LineaHorizonte linea) {
     	
     	Punto paux = new Punto();
     	
@@ -169,10 +183,10 @@ ciudad = new ArrayList <Edificio>();
         {
              paux=linea.getPunto(0); // guardamos en paux el primer punto
             
-             if (paux.getY()!=ultimaAlturaAnterior) // si paux no tiene la misma altura del segmento ultimaAlturaAnteriorio
+             if (devolverCoordenadaY(paux)!=ultimaAlturaAnterior) // si paux no tiene la misma altura del segmento ultimaAlturaAnteriorio
              {
-                 salida.addPunto(paux); // lo añadimos al LineaHorizonte de salida
-                 ultimaAlturaAnterior = paux.getY();    // y actualizamos ultimaAlturaAnterior
+                 salidaFusion.addPunto(paux); // lo añadimos al LineaHorizonte de salida
+                 ultimaAlturaAnterior = devolverCoordenadaY(paux);    // y actualizamos ultimaAlturaAnterior
              }
              linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
         }
@@ -180,49 +194,51 @@ ciudad = new ArrayList <Edificio>();
     
     private Punto crearPuntoAuxiliar(Punto punto, int alturaAnteriorPunto) {
     	Punto paux = new Punto();
-    	paux.setX(punto.getX());                // guardamos en paux esa X
-        paux.setY(Math.max(punto.getY(), alturaAnteriorPunto)); // guardamos en paux el maximo entre la Y del punto o alturaAnterior del otro punto
+    	anadirCoordenadaX(paux,devolverCoordenadaX(punto));
+    	anadirCoordenadaY(paux,Math.max(punto.getY(), alturaAnteriorPunto));
+    	//paux.setX(punto.getX());                // guardamos en paux esa X
+        //paux.setY(Math.max(punto.getY(), alturaAnteriorPunto)); // guardamos en paux el maximo entre la Y del punto o alturaAnterior del otro punto
         return paux;
     }
     
-    private void utilizarPrimerHorizonte(Punto punto, LineaHorizonte linea, LineaHorizonte salida) {
+    private void utilizarPrimerHorizonte(Punto punto, LineaHorizonte linea) {
     	
     	Punto paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoDos);
     	
-        if (paux.getY()!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
+        if (devolverCoordenadaY(paux)!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
         {
-            salida.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
-            ultimaAlturaAnterior = paux.getY();    // actualizamos ultimaAlturaAnterior
+            salidaFusion.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
+            ultimaAlturaAnterior = devolverCoordenadaY(paux);    // actualizamos ultimaAlturaAnterior
         }
-        alturaAnteriorPuntoUno = punto.getY();   // actualizamos la altura alturaAnteriorPuntoUno
+        alturaAnteriorPuntoUno = devolverCoordenadaY(punto);   // actualizamos la altura alturaAnteriorPuntoUno
         linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
     }
     
-    private void utilizarSegundoHorizonte(Punto punto, LineaHorizonte linea, LineaHorizonte salida) {
+    private void utilizarSegundoHorizonte(Punto punto, LineaHorizonte linea) {
         Punto paux = crearPuntoAuxiliar(punto,this.alturaAnteriorPuntoUno);
     	
-        if (paux.getY()!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
+        if (devolverCoordenadaY(paux)!=ultimaAlturaAnterior) // si este maximo no es igual al del segmento anterior
         {
-            salida.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
-            ultimaAlturaAnterior = paux.getY();    // actualizamos ultimaAlturaAnterior
+            salidaFusion.addPunto(paux); // añadimos el punto al LineaHorizonte de salida
+            ultimaAlturaAnterior = devolverCoordenadaY(paux);    // actualizamos ultimaAlturaAnterior
         }
-        alturaAnteriorPuntoDos = punto.getY();   // actualizamos la altura alturaAnteriorPuntoDos
+        alturaAnteriorPuntoDos = devolverCoordenadaY(punto);   // actualizamos la altura alturaAnteriorPuntoDos
         linea.borrarPunto(0); // en cualquier caso eliminamos el punto de la linea horizonte
     }
     
-    private void utilizarHorizonteMasAlto(Punto uno, Punto dos, LineaHorizonte salida) {
-    	if ((uno.getY() > dos.getY()) && (uno.getY()!=ultimaAlturaAnterior)) // guardaremos aquel punto que tenga la altura mas alta
-        {
-            salida.addPunto(uno);
-            ultimaAlturaAnterior = uno.getY();
+    private void utilizarHorizonteMasAlto(Punto uno, Punto dos, LineaHorizonte primero, LineaHorizonte segundo) {
+    	if ((devolverCoordenadaY(uno) > devolverCoordenadaY(dos)) && (devolverCoordenadaY(uno)!=ultimaAlturaAnterior)) { // guardaremos aquel punto que tenga la altura mas alta
+            salidaFusion.addPunto(uno);
+            ultimaAlturaAnterior = devolverCoordenadaY(uno);
         }
-        if ((uno.getY() <= dos.getY()) && (dos.getY()!=ultimaAlturaAnterior))
-        {
-            salida.addPunto(dos);
-            ultimaAlturaAnterior = dos.getY();
+        if ((devolverCoordenadaY(uno) <= devolverCoordenadaY(dos)) && (devolverCoordenadaY(dos)!=ultimaAlturaAnterior)){
+            salidaFusion.addPunto(dos);
+            ultimaAlturaAnterior = devolverCoordenadaY(dos);
         }
-        alturaAnteriorPuntoUno = uno.getY();   // actualizamos la alturaAnteriorPuntoUno e alturaAnteriorPuntoDos
-        alturaAnteriorPuntoDos = dos.getY();
+        alturaAnteriorPuntoUno = devolverCoordenadaY(uno);   // actualizamos la alturaAnteriorPuntoUno e alturaAnteriorPuntoDos
+        alturaAnteriorPuntoDos = devolverCoordenadaY(dos);
+        primero.borrarPunto(0); // eliminamos el punto del s1 y del s2
+        segundo.borrarPunto(0);
     }
     
     /*
@@ -272,31 +288,4 @@ public void cargarEdificios (String fichero)
             this.addEdificio(new Edificio(xi,y,xd));
         }
     }
-
-
-	public int getX() {
-	    return x;
-	}
-	
-	/*
-	 * 
-	 * Set de la coordenada X
-	 */
-	public void setX(int x) {
-	    this.x = x;
-	}
-	/*
-		   Get de la coordenada Y
-	 */
-	public int getY() {
-	    return y;
-	}
-	/* 
-	 * Set de la coordenada Y
-	 */
-	public void setY(int y) {
-	    this.y = y;
-	}
-
 }
-
