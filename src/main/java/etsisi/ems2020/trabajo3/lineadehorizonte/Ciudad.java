@@ -26,11 +26,6 @@ public class Ciudad {
 
 	private Punto paux = new Punto ();
 	
-    
-    private void anadirCoordenadaX(Punto p,int x) {
-        p.setX(x);
-    }
-    
     private void anadirCoordenadaY(Punto p,int y) {
          p.setY(y);
     }
@@ -200,7 +195,8 @@ public class Ciudad {
     	
     	Punto paux = new Punto();
     	
-    	anadirCoordenadaX(paux,devolverCoordenadaX(punto));
+    	paux.setX(devolverCoordenadaX(punto));
+    	//anadirCoordenadaX(paux,devolverCoordenadaX(punto));
     	anadirCoordenadaY(paux,Math.max(devolverCoordenadaY(punto), alturaAnteriorPunto));
         return paux;
         
@@ -293,5 +289,6 @@ public class Ciudad {
         }
     }
 }
+
 
 
